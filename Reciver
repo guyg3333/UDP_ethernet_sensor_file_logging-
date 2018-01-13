@@ -1,0 +1,48 @@
+import java.io.IOException;
+import java.net.*;
+
+public class Reciver {
+
+    public static void main(String[] args) {
+        int port = 155;
+        new Reciver().run(port);
+    }
+
+    public void run(int port) {    
+      try {
+        DatagramSocket serverSocket = new DatagramSocket(port);
+        byte[] receiveData = new byte[8];
+
+        System.out.printf("Listening on udp:%s:%d%n",
+                InetAddress.getLocalHost().getHostAddress(), port);     
+        DatagramPacket receivePacket = new DatagramPacket(receiveData,
+                           receiveData.length);
+
+        while(true)
+        {
+              serverSocket.receive(receivePacket);
+              String sentence = new String( receivePacket.getData(), 0,
+                                 receivePacket.getLength() );
+              
+              
+            // int ans = (int)(receiveData[0]|receiveData[1]);
+              
+              int ans = (receiveData[1]<<8)&0x0000ff00 | (receiveData[0]<<0)&0x000000ff ;
+              
+             System.out.println(ans);
+            
+             
+              // now send acknowledgement packet back to sender     
+              InetAddress IPAddress = receivePacket.getAddress();
+              String sendString = "polo";
+              byte[] sendData = sendString.getBytes("UTF-8");
+              DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length,
+                   IPAddress, receivePacket.getPort());
+              serverSocket.send(sendPacket);
+        }
+      } catch (IOException e) {
+              System.out.println(e);
+      }
+      // should close serverSocket in finally block
+    }
+}
