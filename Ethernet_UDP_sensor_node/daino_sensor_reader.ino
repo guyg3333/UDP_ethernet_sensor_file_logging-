@@ -78,21 +78,22 @@ void setup(void)
   // the devices on your bus (and assuming they don't change).
   // 
   // method 1: by index
-  if (!sensors.getAddress(device[0], 0)) 
+  if (!sensors.getAddress(device[0], 0)) //fail to find
   {
-    Serial.println("Unable to find address for Device 1"); 
-    sens_working[0] = 0x00;
+    Serial.println("Unable to find address for Device 1");    // print fail 1
+    sens_working[0] = 0x00;                                   // mark that sensor 1 is NOT active
   }
-  else
+  else                                  // find one
   {
-      Serial.print("Device 1 Address: ");
-      printAddress(device[0]);
-      sens_working[0] = 0x01;
-      sens_count++;
+      Serial.print("Device 1 Address: "); 
+      printAddress(device[0]);            // print the address
       Serial.println();
+      sens_working[0] = 0x01;             // mark that sensor 1 is active
+      sens_count++;                       // and add it to the snosor counter
+
   }
   
-  if (!sensors.getAddress(device[1], 1)) 
+  if (!sensors.getAddress(device[1], 1))                  // ETC.... for 2.3.4
   {
     Serial.println("Unable to find address for Device 2");
     sens_working[1] = 0x00;
@@ -149,7 +150,10 @@ void setup(void)
   // assigns the seconds address found to outsideThermometer
   //if (!oneWire.search(outsideThermometer)) Serial.println("Unable to find address for outsideThermometer");
 
-  // show the addresses we found on the bus
+  
+  
+  // *********************** OLD FUNC NOT IN USE   ******************
+  // show the addresses we found on the bus  **** OLD FUNC NOT in use only for back up 
   
   #if 0
   Serial.print("Device 1 Address: ");
@@ -191,7 +195,9 @@ void setup(void)
   
 #endif
 
-  // set the resolution to 9 bit per device
+ // *********************** NEW ONE   ******************
+ // set and print the resolution to 9 bit per device
+
   if( sens_working[0] == 0x01 )
   {
     sensors.setResolution(device[0], TEMPERATURE_PRECISION);
@@ -342,7 +348,7 @@ if( sens_working[3] == 0x01 )
 
 Serial.println("");
 
-
+// if to hot 
   if( ( ( tempC[0].u32 > 60.0 ) && sens_working[0]  ) || ( ( tempC[1].u32 > 60.0 ) && sens_working[1]  ) || ( ( tempC[2].u32 > 60.0 ) && sens_working[2]  ) || ( ( tempC[3].u32 > 60.0 ) && sens_working[3]  ) || T > 80.0 )
   {
 
@@ -364,8 +370,6 @@ for(i = 0 ; i < sens_count ; i++){
   }
   
   Serial.println("");
-
-
 
 #endif  
 
